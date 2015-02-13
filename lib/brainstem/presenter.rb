@@ -115,12 +115,22 @@ module Brainstem
 
     # @api private
     # Calls {#custom_preload}, and then {#present} and {#post_process}, for each model.
-    def group_present(models, associations = [])
+    def group_present(models, associations = [], options = {})
       custom_preload models, associations
 
       models.map do |model|
-        present_and_post_process model, associations
+        presented_model = present_and_post_process model, associations
+        if options[:additional_fields]
+          presented_model[:additional_fields] = add_additional_fields(options[:additional_fields], model)
+        end
+        presented_model
       end
+    end
+
+    def add_additional_fields(fields, model)
+      fields_hash = {}
+      fields.each { |field| fields_hash[field] = additional_field(field, model) }
+      fields_hash
     end
 
     # Subclasses can define this if they wish. This method will be called before {#present}.

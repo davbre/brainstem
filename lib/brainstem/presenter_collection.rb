@@ -101,7 +101,8 @@ module Brainstem
       end
 
       if primary_models.length > 0
-        presented_primary_models = options[:presenter].group_present(models, includes_hash.keys)
+        presented_primary_models = options[:presenter].group_present(models, includes_hash.keys, additional_fields: options[:params][:additional_fields])
+
         struct[options[:as]] += presented_primary_models
         struct[:results] = presented_primary_models.map { |model| { :key => options[:as].to_s, :id => model[:id] } }
       end
